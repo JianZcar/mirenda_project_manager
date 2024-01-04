@@ -11,7 +11,7 @@
 }
 
 .login-form button {
-    background-color: #87b2a6;
+    background-color: #e7fdef;
     margin-top: 20px;
 }
 
@@ -28,5 +28,6 @@
 }
 
 .register-form button {
+    background-color: #e7fdef;
     margin-top: 20px;
 }

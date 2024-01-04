@@ -17,15 +17,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
-from mirenda_manage.views import home_view, login_view, logout_view, register_view
+from django.contrib.auth import views as auth_views
+from mirenda_manage.views import home_view, login_view, register_view
 
 urlpatterns = [
     path('', RedirectView.as_view(url='home/'), name='root'),
     path('admin/', admin.site.urls),
     path("accounts/", include("django.contrib.auth.urls")),
     path('login/', login_view, name='login'),
-    path('logout/', logout_view, name='logout'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
     path('register/', register_view, name='register'),
     path('home/', home_view, name='home'),
-
 ]
