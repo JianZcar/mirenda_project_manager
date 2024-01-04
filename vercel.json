@@ -1,11 +1,5 @@
 {
-  "builds": [
-    {
-      "src": "manage.py",
-      "use": "@vercel/python",
-      "config": {
-        "requirementsTxt": "requirements.txt"
-      }
-    }
-  ]
+  "version": 2,
+  "name": "Mirenda",
+  "scope": "Zenalia"
 }
