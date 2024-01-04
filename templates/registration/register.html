@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock title %}
+
+{% block content %}
+    <div class="register-container">
+        <h2>Register</h2>
+        <form method="post" class="register-form">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="error">{{ field.errors.as_text }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit">Register</button>
+            <login>Already have an account? <a href="{% url 'login' %}">Login</a></login>
+        </form>
+    </div>
+{% endblock %}

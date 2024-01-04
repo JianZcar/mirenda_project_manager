@@ -15,12 +15,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from mirenda_manage.views import base_view, login_view, home_view
+from django.urls import path, include
+from django.views.generic import RedirectView
+from mirenda_manage.views import home_view, login_view, logout_view, register_view
 
 urlpatterns = [
+    path('', RedirectView.as_view(url='home/'), name='root'),
     path('admin/', admin.site.urls),
-    path('base/', base_view, name='base'),
-    path('home/', home_view, name='home'),
+    path("accounts/", include("django.contrib.auth.urls")),
     path('login/', login_view, name='login'),
+    path('logout/', logout_view, name='logout'),
+    path('register/', register_view, name='register'),
+    path('home/', home_view, name='home'),
+
 ]
