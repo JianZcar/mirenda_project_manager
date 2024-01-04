@@ -1,14 +1,11 @@
 {
-    "builds": [
-      {
-        "src": "project_manager/wsgi.py",
-        "use": "@vercel/python"
+  "builds": [
+    {
+      "src": "manage.py",
+      "use": "@vercel/python",
+      "config": {
+        "requirementsTxt": "requirements.txt"
       }
-    ],
-    "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "project_manager/wsgi.py"
-      }
-    ]
+    }
+  ]
 }
