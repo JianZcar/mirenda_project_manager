@@ -5,11 +5,13 @@ from django.contrib.auth import login as auth_login
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
+from .models import Project
 
 
 @login_required
 def home_view(request):
-    return render(request, 'home.html')
+    projects = Project.objects.all()  # fetch all projects from the database
+    return render(request, 'home.html', {'projects': projects})  # pass the projects to the template
 
 
 def login_view(request):
