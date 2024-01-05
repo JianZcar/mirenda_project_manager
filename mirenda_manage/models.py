@@ -3,7 +3,6 @@ from django.contrib.auth.models import AbstractUser
 
 
 class CustomUser(AbstractUser):
-    # Add your additional fields here
     user_id = models.AutoField(primary_key=True)
 
 
