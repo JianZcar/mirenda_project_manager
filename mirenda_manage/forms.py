@@ -1,5 +1,5 @@
 from django import forms
-from .models import Project
+from .models import Project, Task
 from django.contrib.auth import get_user_model
 
 
@@ -33,3 +33,20 @@ class CustomUserCreationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+
+class TaskForm(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields = ['name', 'description', 'project', 'deadline']
+        widgets = {
+            'deadline': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.project = kwargs.pop('project', None)
+        super(TaskForm, self).__init__(*args, **kwargs)
+        self.fields['project'].widget = forms.HiddenInput()
+        if self.project:
+            self.fields['project'].initial = self.project
+            self.fields['project'].disabled = True

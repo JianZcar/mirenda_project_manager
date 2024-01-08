@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.forms import UserCreationForm
+# from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login as auth_login
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from .models import Project
-from .forms import ProjectForm, CustomUserCreationForm
+from .forms import ProjectForm, CustomUserCreationForm, TaskForm
 
 from django.shortcuts import get_object_or_404
 
@@ -52,7 +52,9 @@ def register_view(request):
 @login_required
 def project_view(request, pk):  # add 'pk' as an argument
     project = get_object_or_404(Project, pk=pk)  # use 'pk' to fetch the project
-    return render(request, 'project.html', {'project': project})
+    tasks = project.task_set.all()  # fetch the tasks related to the project
+    form = TaskForm()  # create an instance of TaskForm
+    return render(request, 'project.html', {'project': project, 'tasks': tasks, 'form': form})
 
 
 def create_project(request):
@@ -65,4 +67,17 @@ def create_project(request):
             return redirect('home')
     else:
         form = ProjectForm()
-    return render(request, 'create_project.html', {'form': form})
+    return render(request, '', {'form': form})
+
+
+def create_task(request):
+    if request.method == 'POST':
+        form = TaskForm(request.POST)
+        if form.is_valid():
+            form.instance.project = get_object_or_404(Project, pk=request.POST.get('project'))  # set the project before saving the form
+            form.save()
+            return redirect('project_view', pk=form.instance.project.pk)
+        else:
+            print(form.errors)  # print form errors if the form is not valid
+    return redirect('home')
+

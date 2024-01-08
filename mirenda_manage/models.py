@@ -16,7 +16,7 @@ class Task(models.Model):
     name = models.CharField(max_length=200)
     task_id = models.AutoField(primary_key=True)
     description = models.TextField()
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='tasks')
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
     deadline = models.DateTimeField()
     completed = models.BooleanField(default=False)
     completed_at = models.DateTimeField(null=True, blank=True)
