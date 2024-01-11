@@ -22,8 +22,4 @@ class Task(models.Model):
     completed_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-
-class TaskAssignment(models.Model):
-    task_id = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='tasks_users')
-    user_id = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='tasks_users')
+    assigned_to = models.ManyToManyField(CustomUser, related_name='tasks')

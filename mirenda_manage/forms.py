@@ -47,9 +47,10 @@ class CustomUserCreationForm(forms.ModelForm):
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ['name', 'description', 'project', 'deadline']
+        fields = ['name', 'description', 'project', 'deadline', 'assigned_to']  # add 'assigned_to'
         widgets = {
             'deadline': forms.DateInput(attrs={'type': 'date'}),
+            'assigned_to': forms.CheckboxSelectMultiple,  # use checkboxes for selecting users
         }
 
     def __init__(self, *args, **kwargs):
