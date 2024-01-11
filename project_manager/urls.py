@@ -18,7 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
 from django.contrib.auth import views as auth_views
-from mirenda_manage.views import home_view, login_view, register_view, project_view, create_project, create_task
+from mirenda_manage.views import (home_view, login_view, register_view, project_view, create_project, create_task,
+                                  mark_task_as_done)
 
 
 urlpatterns = [
@@ -32,4 +33,5 @@ urlpatterns = [
     path('projects/<int:pk>/', project_view, name='project_view'),
     path('create_project/', create_project, name='create_project'),
     path('create_task/', create_task, name='create_task'),
+    path('task/<int:pk>/done/', mark_task_as_done, name='mark_task_as_done'),
 ]

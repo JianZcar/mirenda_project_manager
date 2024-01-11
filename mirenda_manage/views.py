@@ -5,7 +5,7 @@ from django.contrib.auth import login as auth_login
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
-from .models import Project, CustomUser
+from .models import Project, CustomUser, Task
 from .forms import ProjectForm, CustomUserCreationForm, TaskForm
 
 from django.shortcuts import get_object_or_404
@@ -58,6 +58,7 @@ def project_view(request, pk):  # add 'pk' as an argument
     return render(request, 'project.html', {'project': project, 'tasks': tasks, 'form': form,
                                             'members': members})
 
+
 def create_project(request):
     if request.method == 'POST':
         form = ProjectForm(request.POST, request=request)
@@ -85,3 +86,12 @@ def create_task(request):
             print(form.errors)  # print form errors if the form is not valid
     return redirect('home')
 
+
+@login_required
+def mark_task_as_done(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    if request.user in task.assigned_to.all():  # check if the current user is assigned to the task
+        task.completed = True
+        task.completed_by = request.user
+        task.save()
+    return redirect('project_view', pk=task.project.pk)

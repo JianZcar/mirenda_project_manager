@@ -3,25 +3,30 @@
 {% block content %}
     <h1>{{ project.name }}</h1>
     <p>{{ project.description }}</p>
-
+    
     <h2>Members</h2>
     <ul>
         {% for member in members %}
             <li>{{ member.username }}</li>
         {% endfor %}
     </ul>
-
-    <div class="row">
+    <h2>Tasks</h2>
+    <ul>
         {% for task in tasks %}
-            <div class="card custom-card">
-                <div class="card-body">
-                    <h3 class="card-title">{{ task.name }}</h3>
-                    <p class="card-text">{{ task.description }}</p>
-                </div>
-            </div>
+            <li>
+                {{ task.name }}
+                <p>Deadline: {{ task.deadline|date:"F j, Y" }}</p>
+                {% if task.completed %}
+                    <p>Task Done by: {{ task.completed_by.username }}</p>  <!-- add this line -->
+                {% else %}
+                    <form method="post" action="{% url 'mark_task_as_done' task.task_id %}">
+                        {% csrf_token %}
+                        <button type="submit">Mark as done</button>
+                    </form>
+                {% endif %}
+            </li>
         {% endfor %}
-    </div>
-
+    </ul>
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#createTaskModal">
         Add Task
