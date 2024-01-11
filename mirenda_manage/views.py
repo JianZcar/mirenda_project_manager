@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.forms import AuthenticationForm
 # from django.contrib.auth.forms import UserCreationForm
+from django.http import Http404
 from django.contrib.auth import login as auth_login
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
@@ -79,7 +80,8 @@ def create_task(request):
     if request.method == 'POST':
         form = TaskForm(request.POST)
         if form.is_valid():
-            form.instance.project = get_object_or_404(Project, pk=request.POST.get('project'))  # set the project before saving the form
+            form.instance.project = get_object_or_404(Project, pk=request.POST.get('project'))
+            # set the project before saving the form
             form.save()
             return redirect('project_view', pk=form.instance.project.pk)
         else:
@@ -103,3 +105,31 @@ def delete_task(request, pk):
     if request.user in task.assigned_to.all():  # check if the current user is assigned to the task
         task.delete()
     return redirect('project_view', pk=task.project.pk)
+
+
+@login_required
+def remove_member(request, pk):
+    member = get_object_or_404(CustomUser, pk=pk)
+    project = get_object_or_404(Project, members=member)
+    project.members.remove(member)
+    return redirect('project_view', pk=project.pk)
+
+
+@login_required
+def add_member(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        try:
+            user = get_object_or_404(CustomUser, username=username)
+            project.members.add(user)
+        except Http404:
+            pass
+        return redirect('project_view', pk=project.pk)
+
+
+@login_required
+def delete_project(request, pk):
+    project = get_object_or_404(Project, pk=pk)
+    project.delete()
+    return redirect('home')
