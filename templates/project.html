@@ -1,36 +1,52 @@
 {% extends 'base.html' %}
 {% block title %}{{ project.name }}{% endblock title %}
 {% block content %}
-    <h1>{{ project.name }}</h1>
-    <p>{{ project.description }}</p>
-    
-    <h2>Members</h2>
-    <ul>
-        {% for member in members %}
-            <li>{{ member.username }}</li>
-        {% endfor %}
-    </ul>
-    <h2>Tasks</h2>
-    <ul>
-        {% for task in tasks %}
-            <li>
-                {{ task.name }}
-                <p>Deadline: {{ task.deadline|date:"F j, Y" }}</p>
-                {% if task.completed %}
-                    <p>Task Done by: {{ task.completed_by.username }}</p>  <!-- add this line -->
-                {% else %}
-                    <form method="post" action="{% url 'mark_task_as_done' task.task_id %}">
-                        {% csrf_token %}
-                        <button type="submit">Mark as done</button>
-                    </form>
-                {% endif %}
+    {% include 'includes/navbar.html' %}
+    <div class="container">
+        <h1 class="mt-4">{{ project.name }}</h1>
+        <p class="lead">{{ project.description }}</p>
+
+        <h2 class="mt-4">Members</h2>
+        <ul class="list-group">
+            {% for member in members %}
+                <li class="list-group-item">{{ member.username }}</li>
+            {% endfor %}
+        </ul>
+
+        <h2 class="mt-4">Tasks</h2>
+        <ul class="list-group">
+            {% for task in tasks %}
+                <li class="list-group-item">
+                    <div style="display: flex; justify-content: space-between;">
+                        <div>
+                            <h5>{{ task.name }}</h5>
+                            <p>Deadline: {{ task.deadline|date:"F j, Y" }}</p>
+                            {% if task.completed %}
+                                <p>Task Done by: {{ task.completed_by.username }}</p>
+                            {% else %}
+                                <form method="post" action="{% url 'mark_task_as_done' task.task_id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success">Mark as done</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <form method="post" action="{% url 'delete_task' task.task_id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Delete Task</button>
+                            </form>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+            <li class="list-group-item" style="display: flex; justify-content: center; align-items: center;">
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createTaskModal">
+                    Add Task
+                </button>
             </li>
-        {% endfor %}
-    </ul>
-    <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#createTaskModal">
-        Add Task
-    </button>
+        </ul>
+    </div>
 
     <!-- Modal -->
     <div class="modal fade" id="createTaskModal" tabindex="-1" role="dialog" aria-labelledby="createTaskModalLabel"

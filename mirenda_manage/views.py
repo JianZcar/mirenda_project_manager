@@ -95,3 +95,11 @@ def mark_task_as_done(request, pk):
         task.completed_by = request.user
         task.save()
     return redirect('project_view', pk=task.project.pk)
+
+
+@login_required
+def delete_task(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    if request.user in task.assigned_to.all():  # check if the current user is assigned to the task
+        task.delete()
+    return redirect('project_view', pk=task.project.pk)
