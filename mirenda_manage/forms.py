@@ -2,14 +2,19 @@ from django import forms
 from .models import Project, Task
 from django.contrib.auth import get_user_model
 
+User = get_user_model()
+
 
 class ProjectForm(forms.ModelForm):
+    users = forms.ModelMultipleChoiceField(
+        queryset=User.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+
     class Meta:
         model = Project
-        fields = ['name', 'description']
-
-
-User = get_user_model()
+        fields = ['name', 'description', 'users']
 
 
 class CustomUserCreationForm(forms.ModelForm):

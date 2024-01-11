@@ -5,7 +5,7 @@ from django.contrib.auth import login as auth_login
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
-from .models import Project
+from .models import Project, CustomUser
 from .forms import ProjectForm, CustomUserCreationForm, TaskForm
 
 from django.shortcuts import get_object_or_404
@@ -53,17 +53,20 @@ def register_view(request):
 def project_view(request, pk):  # add 'pk' as an argument
     project = get_object_or_404(Project, pk=pk)  # use 'pk' to fetch the project
     tasks = project.task_set.all()  # fetch the tasks related to the project
+    members = project.members.all()  # fetch the members of the project
     form = TaskForm()  # create an instance of TaskForm
-    return render(request, 'project.html', {'project': project, 'tasks': tasks, 'form': form})
+    return render(request, 'project.html', {'project': project, 'tasks': tasks, 'form': form, 'members': members})
 
 
 def create_project(request):
     if request.method == 'POST':
         form = ProjectForm(request.POST)
         if form.is_valid():
-            project = form.save(commit=False)  # create a project instance but don't save it to the database yet
-            project.save()  # save the project to the database
-            project.members.add(request.user)  # add the current user to the project's members
+            project = form.save(commit=False)
+            project.save()
+            users = form.cleaned_data.get('users')
+            for user in users:
+                project.members.add(user)
             return redirect('home')
     else:
         form = ProjectForm()
