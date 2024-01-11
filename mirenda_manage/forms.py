@@ -1,13 +1,11 @@
 from django import forms
 from .models import Project, Task
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
+from .models import CustomUser as User
 
 
 class ProjectForm(forms.ModelForm):
     users = forms.ModelMultipleChoiceField(
-        queryset=User.objects.all(),
+        queryset=User.objects.none(),  # initially, no users are included
         widget=forms.CheckboxSelectMultiple,
         required=False
     )
@@ -15,6 +13,12 @@ class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
         fields = ['name', 'description', 'users']
+
+    def __init__(self, *args, **kwargs):
+        request = kwargs.pop('request', None)
+        super(ProjectForm, self).__init__(*args, **kwargs)
+        if request:
+            self.fields['users'].queryset = User.objects.exclude(user_id=request.user.user_id)
 
 
 class CustomUserCreationForm(forms.ModelForm):

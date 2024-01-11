@@ -13,7 +13,7 @@ from django.shortcuts import get_object_or_404
 
 @login_required
 def home_view(request):
-    form = ProjectForm()  # create an instance of the form
+    form = ProjectForm(request=request)  # pass the request object when creating an instance of the form
     projects = Project.objects.filter(members=request.user)  # fetch only projects where the current user is a member
     return render(request, 'home.html', {'projects': projects, 'form': form})
     # pass the form and the projects to the template
@@ -60,16 +60,17 @@ def project_view(request, pk):  # add 'pk' as an argument
 
 def create_project(request):
     if request.method == 'POST':
-        form = ProjectForm(request.POST)
+        form = ProjectForm(request.POST, request=request)
         if form.is_valid():
             project = form.save(commit=False)
             project.save()
             users = form.cleaned_data.get('users')
             for user in users:
                 project.members.add(user)
+            project.members.add(request.user)  # add the current user to the project's members
             return redirect('home')
     else:
-        form = ProjectForm()
+        form = ProjectForm(request=request)
     return render(request, '', {'form': form})
 
 
