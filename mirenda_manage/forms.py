@@ -45,12 +45,14 @@ class CustomUserCreationForm(forms.ModelForm):
 
 
 class TaskForm(forms.ModelForm):
+    no_deadline = forms.BooleanField(required=False)  # add no_deadline field
+
     class Meta:
         model = Task
-        fields = ['name', 'description', 'project', 'deadline', 'assigned_to']  # add 'assigned_to'
+        fields = ['name', 'description', 'project', 'deadline', 'assigned_to', 'no_deadline']  # add 'no_deadline'
         widgets = {
             'deadline': forms.DateInput(attrs={'type': 'date'}),
-            'assigned_to': forms.CheckboxSelectMultiple,  # use checkboxes for selecting users
+            'assigned_to': forms.CheckboxSelectMultiple,
         }
 
     def __init__(self, *args, **kwargs):
@@ -60,3 +62,10 @@ class TaskForm(forms.ModelForm):
         if self.project:
             self.fields['project'].initial = self.project
             self.fields['project'].disabled = True
+
+    def clean(self):
+        cleaned_data = super().clean()
+        no_deadline = cleaned_data.get('no_deadline')
+        if no_deadline:
+            cleaned_data['deadline'] = None  # set deadline to None if no_deadline is checked
+        return cleaned_data
