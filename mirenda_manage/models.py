@@ -20,6 +20,8 @@ class Task(models.Model):
     deadline = models.DateTimeField(null=True, blank=True)  # make deadline optional
     completed = models.BooleanField(default=False)
     completed_at = models.DateTimeField(null=True, blank=True)
+    completed_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True,
+                                     related_name='completed_tasks')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     assigned_to = models.ManyToManyField(CustomUser, related_name='tasks')

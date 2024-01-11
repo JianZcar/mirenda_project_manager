@@ -62,6 +62,8 @@ class TaskForm(forms.ModelForm):
         if self.project:
             self.fields['project'].initial = self.project
             self.fields['project'].disabled = True
+            self.fields['assigned_to'].queryset = self.project.members.all()
+            # limit the queryset to the members of the project
 
     def clean(self):
         cleaned_data = super().clean()

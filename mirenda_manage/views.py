@@ -54,9 +54,9 @@ def project_view(request, pk):  # add 'pk' as an argument
     project = get_object_or_404(Project, pk=pk)  # use 'pk' to fetch the project
     tasks = project.task_set.all()  # fetch the tasks related to the project
     members = project.members.all()  # fetch the members of the project
-    form = TaskForm()  # create an instance of TaskForm
-    return render(request, 'project.html', {'project': project, 'tasks': tasks, 'form': form, 'members': members})
-
+    form = TaskForm(project=project)  # pass the project instance when creating an instance of the form
+    return render(request, 'project.html', {'project': project, 'tasks': tasks, 'form': form,
+                                            'members': members})
 
 def create_project(request):
     if request.method == 'POST':
